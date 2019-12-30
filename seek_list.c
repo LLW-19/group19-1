@@ -37,7 +37,7 @@
 
 #ifndef NS_PORT
 /* The seek list is a linked list of destinations we are seeking
-   (with RREQ's). */
+   (with RREQ's). *///搜索列表是我们正在寻找的目标的链接列表(带有RREQ)。
 
 static LIST(seekhead);
 

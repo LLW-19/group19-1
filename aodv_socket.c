@@ -1,4 +1,4 @@
-/*****************************************************************************
+	/*****************************************************************************
  *
  * Copyright (C) 2001 Uppsala University and Ericsson AB.
  *
@@ -180,7 +180,7 @@ void NS_CLASS aodv_socket_init()
 		 "RAW send socket buffer size set to %d", bufsize);
 	}
 #endif
-	/* Set max allowable receive buffer size... */
+	/* Set max allowable receive buffer size... *///设置最大的可接受缓冲区大小
 	for (;; bufsize -= 1024) {
 	    if (setsockopt(DEV_NR(i).sock, SOL_SOCKET, SO_RCVBUF,
 			   (char *) &bufsize, optlen) == 0) {
@@ -395,9 +395,9 @@ void NS_CLASS aodv_socket_send(AODV_msg * aodv_msg, struct in_addr dst,
 
        Note: This method is _only_ for sending AODV packets to other routing
        agents, _not_ for forwarding "regular" IP packets!
-     */
+     *///NS_PORT:向其他AODV-UU路由代理发送AODV_msg消息将它们封装在一个包中。注意:此方法仅用于向其他路由发送AODV包代理，_not_用于转发“常规”IP数据包!
 
-    /* If we are in waiting phase after reboot, don't send any RREPs */
+    /* If we are in waiting phase after reboot, don't send any RREPs *///如果我们在重新启动后处于等待阶段，请不要发送任何rrep
     if (wait_on_reboot && aodv_msg->type == AODV_RREP)
 	return;
 
@@ -405,7 +405,7 @@ void NS_CLASS aodv_socket_send(AODV_msg * aodv_msg, struct in_addr dst,
        NS_PORT: Don't allocate packet until now. Otherwise packet uid
        (unique ID) space is unnecessarily exhausted at the beginning of
        the simulation, resulting in uid:s starting at values greater than 0.
-     */
+     *///NS_PORT:直到现在才分配包。否则，包uid(惟一ID)空间在模拟开始时被不必要地耗尽，导致uid:s从大于0的值开始。
     Packet *p = allocpkt();
     struct hdr_cmn *ch = HDR_CMN(p);
     struct hdr_ip *ih = HDR_IP(p);
