@@ -68,13 +68,13 @@ void NS_CLASS route_discovery_timeout(void *arg)
 
 		if (expanding_ring_search) {
 
-			if (TTL_VALUE < TTL_THRESHOLD)
-				TTL_VALUE += TTL_INCREMENT;
+			if (TTL_VALUE < TTL_THRESHOLD)//当ttl小于门槛值
+				TTL_VALUE += TTL_INCREMENT;//增大ttl
 			else {
 				TTL_VALUE = NET_DIAMETER;
 				seek_entry->reqs++;
 			}
-			/* Set a new timer for seeking this destination */
+			/* Set a new timer for seeking this destination *///设置一个新的计时器来寻找这个目的地
 			timer_set_timeout(&seek_entry->seek_timer,
 					  RING_TRAVERSAL_TIME);
 		} else {
@@ -84,13 +84,13 @@ void NS_CLASS route_discovery_timeout(void *arg)
 					  NET_TRAVERSAL_TIME);
 		}
 		/* AODV should use a binary exponential backoff RREP waiting
-		   time. */
+		   time. *///AODV应该使用二进制指数回退RREP等待时间。
 		DEBUG(LOG_DEBUG, 0, "Seeking %s ttl=%d wait=%d",
 		      ip_to_str(seek_entry->dest_addr),
 		      TTL_VALUE, 2 * TTL_VALUE * NODE_TRAVERSAL_TIME);
 
 		/* A routing table entry waiting for a RREP should not be expunged
-		   before 2 * NET_TRAVERSAL_TIME... */
+		   before 2 * NET_TRAVERSAL_TIME... *///等待RREP的路由表条目不应该在2 * net_遍历时间之前被删除…
 		rt = rt_table_find(seek_entry->dest_addr);
 
 		if (rt && timeval_diff(&rt->rt_timer.timeout, &now) <
@@ -114,7 +114,7 @@ void NS_CLASS route_discovery_timeout(void *arg)
 		seek_list_remove(seek_entry);
 
 		/* If this route has been in repair, then we should timeout
-		   the route at this point. */
+		   the route at this point. *///如果此路由已在修复中，那么我们应该在此时暂停该路由。
 		if (repair_rt && (repair_rt->flags & RT_REPAIR)) {
 			DEBUG(LOG_DEBUG, 0, "REPAIR for %s failed!",
 			      ip_to_str(repair_rt->dest_addr));
@@ -134,19 +134,19 @@ void NS_CLASS local_repair_timeout(void *arg)
 	if (!rt)
 		return;
 
-	rerr_dest.s_addr = AODV_BROADCAST;	/* Default destination */
+	rerr_dest.s_addr = AODV_BROADCAST;	/* Default destination *///缺省目的时，广播搜索
 
-	/* Unset the REPAIR flag */
+	/* Unset the REPAIR flag *///取消设置修复标志
 	rt->flags &= ~RT_REPAIR;
 
 #ifndef NS_PORT
 	nl_send_del_route_msg(rt->dest_addr, rt->next_hop, rt->hcnt);
 #endif
-	/* Route should already be invalidated. */
+	/* Route should already be invalidated. *///路由应该已经无效。
 
 	if (rt->nprec) {
 
-		rerr = rerr_create(0, rt->dest_addr, rt->dest_seqno);
+		rerr = rerr_create(0, rt->dest_addr, rt->dest_seqno);//创建rrer
 
 		if (rt->nprec == 1) {
 			rerr_dest = FIRST_PREC(rt->precursors)->neighbor;
@@ -170,7 +170,7 @@ void NS_CLASS local_repair_timeout(void *arg)
 	}
 	precursor_list_destroy(rt);
 
-	/* Purge any packets that may be queued */
+	/* Purge any packets that may be queued *///清除任何可能排队的包
 	/* packet_queue_set_verdict(rt->dest_addr, PQ_DROP); */
 
 	rt->rt_timer.handler = &NS_CLASS route_delete_timeout;
@@ -222,7 +222,7 @@ void NS_CLASS route_delete_timeout(void *arg)
 }
 
 /* This is called when we stop receiveing hello messages from a
-   node. For now this is basically the same as a route timeout. */
+   node. For now this is basically the same as a route timeout. *///当我们停止接收来自节点的hello消息时，将调用它。目前，这基本上与路由超时相同。
 void NS_CLASS hello_timeout(void *arg)
 {
 	rt_table_t *rt;
@@ -262,14 +262,14 @@ void NS_CLASS rrep_ack_timeout(void *arg)
 	rt_table_t *rt;
 
 	/* We must be really sure here, that this entry really exists at
-	   this point... (Though it should). */
+	   this point... (Though it should). *///我们必须非常确定，这个条目确实存在于这一点上……(尽管它应该)。
 	rt = (rt_table_t *) arg;
 
 	if (!rt)
 		return;
 
 	/* When a RREP transmission fails (i.e. lack of RREP-ACK), add to
-	   blacklist set... */
+	   blacklist set... *///当RREP传输失败(即缺乏RREP- ack)，添加到黑名单集…
 	rreq_blacklist_insert(rt->dest_addr);
 
 	DEBUG(LOG_DEBUG, 0, "%s", ip_to_str(rt->dest_addr));
