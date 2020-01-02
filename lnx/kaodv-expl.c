@@ -61,7 +61,7 @@ static inline void __kaodv_expl_set_next_timeout(void)
 	/* Get first entry */
 	ne = (struct expl_entry *)expl_head.next;
 
-	if (timer_pending(&expl_timer)) {
+	if (timer_pending(&expl_timer)) {//timer_pending 是用来判断一个处在定时器管理队列中的定时器对象是否已经被调度执行
 		mod_timer(&expl_timer, ne->expires);
 	} else {
 		expl_timer.function = kaodv_expl_timeout;
@@ -102,11 +102,11 @@ static inline void __kaodv_expl_flush(void)
 {
 	struct list_head *pos, *tmp;
 
-	list_for_each_safe(pos, tmp, &expl_head) {
+	list_for_each_safe(pos, tmp, &expl_head) {//遍历列表，可以安全删除列表项
 		struct expl_entry *e = (struct expl_entry *)pos;
 		list_del(&e->l);
 		expl_len--;
-		kfree(e);
+		kfree(e);//内核模块中释放内存使用kfree
 	}
 }
 
