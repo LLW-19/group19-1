@@ -123,15 +123,15 @@ static inline int llf_rtnl_open(struct rtnl_handle *rth, unsigned subscriptions)
 /*
  * Static information about wireless interface.
  * We cache this info for performance reason.
- */
+ *///关于无线接口的静态信息。出于性能原因，我们缓存此信息。
 typedef struct wireless_iface {
     /* Linked list */
     struct wireless_iface *next;
 
-    /* Interface identification */
-    int ifindex;		/* Interface index == black magic */
+    /* Interface identification *///端口验证
+    int ifindex;		/* Interface index == black magic *///接口索引
 
-    /* Interface data */
+    /* Interface data *///接口数据：接口名，静态数据
     char ifname[IFNAMSIZ + 1];	/* Interface name */
     struct iw_range range;	/* Wireless static data */
     int has_range;
@@ -139,7 +139,7 @@ typedef struct wireless_iface {
 
 /**************************** VARIABLES ****************************/
 
-/* Cache of wireless interfaces */
+/* Cache of wireless interfaces *///缓存无线接口
 struct wireless_iface *interface_cache = NULL;
 
 /*
@@ -150,7 +150,7 @@ static inline int index2name(int skfd, int ifindex, char *name)
     struct ifreq irq;
     int ret = 0;
 
-    memset(name, 0, IFNAMSIZ + 1);
+    memset(name, 0, IFNAMSIZ + 1);//清空信息
 
     /* Get interface name */
     irq.ifr_ifindex = ifindex;
@@ -161,13 +161,13 @@ static inline int index2name(int skfd, int ifindex, char *name)
 
     return (ret);
 }
-
+//获取接口信息
 static struct wireless_iface *iw_get_interface_data(int ifindex)
 {
     struct wireless_iface *curr;
     int skfd = -1;		/* ioctl socket */
 
-    /* Search for it in the database */
+    /* Search for it in the database *///从数据库中查找
     curr = interface_cache;
     while (curr != NULL) {
 	/* Match ? */
